@@ -20,6 +20,12 @@ fn mime_path(base: &Path, filename: &str) -> PathBuf {
 fn search_paths(filename: &str) -> Vec<PathBuf> {
     let mut paths = Vec::new();
 
+    // If the TREE_MAGIC_DIR environment variable is set, use it directly
+    // and return so we just use specified directory.
+    if let Some(load_path) = var_os("TREE_MAGIC_DIR") {
+        return vec![PathBuf::from(load_path).join(filename)];
+    }
+
     let data_dirs = match var_os("XDG_DATA_DIRS") {
         Some(dirs) if !dirs.is_empty() => dirs,
         _ => OsString::from("/usr/local/share/:/usr/share/"),
