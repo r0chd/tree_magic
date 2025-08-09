@@ -10,8 +10,8 @@ use std::sync::OnceLock;
 use petgraph::prelude::DiGraph;
 
 use super::MagicRule;
-use crate::fdo_magic::ruleset;
 use crate::Mime;
+use crate::fdo_magic::ruleset;
 
 fn mime_path(base: &Path, filename: &str) -> PathBuf {
     base.join("mime").join(filename)

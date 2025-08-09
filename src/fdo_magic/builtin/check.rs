@@ -1,5 +1,5 @@
 use super::ALL_RULES;
-use crate::{fdo_magic::check::from_u8_walker, read_bytes, Mime};
+use crate::{Mime, fdo_magic::check::from_u8_walker, read_bytes};
 use petgraph::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;

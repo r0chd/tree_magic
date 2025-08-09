@@ -13,7 +13,8 @@ categories = ["parser-implementations", "filesystem"]
 keywords = ["mime", "filesystem", "media-types"]
 license = "MIT"
 exclude = ["tests/*", "benches/*/"]
-edition = "2021"
+edition = "2024"
+rust-version = "1.85"
 
 [dependencies]
 petgraph = { version = "0.8.0", default-features = false }

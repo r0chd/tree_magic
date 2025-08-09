@@ -1,4 +1,4 @@
-use crate::{read_bytes, Mime};
+use crate::{Mime, read_bytes};
 use std::collections::HashMap;
 use std::fs::File;
 

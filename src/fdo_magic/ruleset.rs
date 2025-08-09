@@ -1,13 +1,13 @@
 use super::MagicRule;
 
 use nom::{
+    IResult,
     bytes::complete::{is_not, tag, take, take_while},
     character::is_digit,
     combinator::{map, map_res, opt},
     multi::many0,
     number::complete::be_u16,
     sequence::{delimited, preceded, terminated, tuple},
-    IResult,
 };
 use petgraph::prelude::*;
 use std::collections::HashMap;
