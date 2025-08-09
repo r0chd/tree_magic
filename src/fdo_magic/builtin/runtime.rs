@@ -5,8 +5,8 @@ use std::env::{split_paths, var_os};
 use std::ffi::OsString;
 use std::fs::{read, read_to_string};
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 
-use once_cell::sync::OnceCell;
 use petgraph::prelude::DiGraph;
 
 use super::MagicRule;
@@ -66,17 +66,17 @@ fn load_concat_strings(filename: &str) -> String {
 }
 
 pub fn aliases() -> &'static str {
-    static ALIAS_STRING: OnceCell<String> = OnceCell::new();
+    static ALIAS_STRING: OnceLock<String> = OnceLock::new();
     ALIAS_STRING.get_or_init(|| load_concat_strings("aliases"))
 }
 
 pub fn subclasses() -> &'static str {
-    static SUBCLASS_STRING: OnceCell<String> = OnceCell::new();
+    static SUBCLASS_STRING: OnceLock<String> = OnceLock::new();
     SUBCLASS_STRING.get_or_init(|| load_concat_strings("subclasses"))
 }
 
 pub fn rules() -> Result<HashMap<Mime, DiGraph<MagicRule<'static>, u32>>, String> {
-    static RUNTIME_RULES: OnceCell<Vec<Vec<u8>>> = OnceCell::new();
+    static RUNTIME_RULES: OnceLock<Vec<Vec<u8>>> = OnceLock::new();
     let files = RUNTIME_RULES.get_or_init(load_xdg_shared_magic);
     ruleset::from_multiple(files)
 }
