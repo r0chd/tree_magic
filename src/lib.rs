@@ -20,7 +20,7 @@
 //!
 //! # Features
 //!
-//! - Very fast perfomance (~150ns to check one file against one type,
+//! - Very fast performance (~150ns to check one file against one type,
 //!   between 5,000ns and 100,000ns to find a MIME type.)
 //! - Check if a file *is* a certain type.
 //! - Handles aliases (ex: `application/zip` vs `application/x-zip-compressed`)
@@ -30,7 +30,8 @@
 //! ## Licensing and the MIME database
 //!
 //! By default, `tree_magic_mini` will attempt to load the shared MIME info
-//! database from the standard locations at runtime.
+//! database from the standard locations at runtime. If the environment variable
+//! `TREE_MAGIC_DIR` is set, it will use that directory instead.
 //!
 //! If you won't have the database files available, or would like to include them
 //! in your binary for simplicity, you can optionally embed the database
