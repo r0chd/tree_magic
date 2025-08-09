@@ -16,7 +16,7 @@ exclude = ["tests/*", "benches/*/"]
 edition = "2021"
 
 [dependencies]
-petgraph = "0.6.0"
+petgraph = { version = "0.8.0", default-features = false }
 nom = "7.0"
 memchr = "2.0"
 tree_magic_db = { version = "3.0", path = "./magic_db" , optional = true }
