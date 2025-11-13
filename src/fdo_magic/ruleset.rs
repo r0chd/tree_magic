@@ -101,18 +101,7 @@ fn gen_graph(magic_rules: Vec<MagicRule<'_>>) -> DiGraph<MagicRule<'_>, u32> {
 #[cfg(feature = "with-gpl-data")]
 pub fn from_u8(b: &[u8]) -> Result<HashMap<&str, DiGraph<MagicRule<'_>, u32>>, String> {
     let tuplevec = ruleset(b).map_err(|e| e.to_string())?.1;
-
-    // Merge rules for MIME types with multiple priority levels
-    let mut merged_rules: HashMap<&str, Vec<MagicRule<'_>>> = HashMap::new();
-    for (mime, rules) in tuplevec {
-        merged_rules.entry(mime).or_insert_with(Vec::new).extend(rules);
-    }
-
-    let res = merged_rules
-        .into_iter()
-        .map(|(mime, rules)| (mime, gen_graph(rules)))
-        .collect();
-    Ok(res)
+    Ok(merge_rules(tuplevec))
 }
 
 #[cfg(not(feature = "with-gpl-data"))]
@@ -122,18 +111,21 @@ pub fn from_multiple(
 ) -> Result<HashMap<&str, DiGraph<MagicRule<'_>, u32>>, String> {
     let mut tuplevec = vec![];
     for slice in files {
-        tuplevec.append(&mut ruleset(slice.as_ref()).map_err(|e| e.to_string())?.1);
+        tuplevec.append(&mut ruleset(slice).map_err(|e| e.to_string())?.1);
     }
+    Ok(merge_rules(tuplevec))
+}
 
+fn merge_rules<'a, 'b>(
+    tuplevec: Vec<(&'a str, Vec<MagicRule<'b>>)>,
+) -> HashMap<&'a str, DiGraph<MagicRule<'b>, u32>> {
     // Merge rules for MIME types with multiple priority levels
     let mut merged_rules: HashMap<&str, Vec<MagicRule<'_>>> = HashMap::new();
     for (mime, rules) in tuplevec {
-        merged_rules.entry(mime).or_insert_with(Vec::new).extend(rules);
+        merged_rules.entry(mime).or_default().extend(rules);
     }
-
-    let res = merged_rules
+    merged_rules
         .into_iter()
         .map(|(mime, rules)| (mime, gen_graph(rules)))
-        .collect();
-    Ok(res)
+        .collect()
 }
