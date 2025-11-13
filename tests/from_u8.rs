@@ -101,37 +101,26 @@ mod from_u8 {
     #[test]
     fn text_html_doctype_lowercase() {
         let html = b"<!DOCTYPE html><html><body></body></html>";
-        assert_eq!(
-            tree_magic::from_u8(html),
-            convmime!("text/html")
-        );
+        assert_eq!(tree_magic::from_u8(html), convmime!("text/html"));
     }
 
     #[test]
     fn text_html_doctype_uppercase() {
         let html = b"<!DOCTYPE HTML><html><body></body></html>";
-        assert_eq!(
-            tree_magic::from_u8(html),
-            convmime!("text/html")
-        );
+        assert_eq!(tree_magic::from_u8(html), convmime!("text/html"));
     }
 
     #[test]
     fn text_html_doctype_only() {
         let html = b"<!DOCTYPE html>";
-        assert_eq!(
-            tree_magic::from_u8(html),
-            convmime!("text/html")
-        );
+        assert_eq!(tree_magic::from_u8(html), convmime!("text/html"));
     }
 
     #[test]
     fn text_html_doctype_with_newline() {
-        let html = b"<!DOCTYPE html>\n<html>\n<head><title>Test</title></head>\n<body></body>\n</html>";
-        assert_eq!(
-            tree_magic::from_u8(html),
-            convmime!("text/html")
-        );
+        let html =
+            b"<!DOCTYPE html>\n<html>\n<head><title>Test</title></head>\n<body></body>\n</html>";
+        assert_eq!(tree_magic::from_u8(html), convmime!("text/html"));
     }
 
     #[test]
