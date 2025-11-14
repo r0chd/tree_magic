@@ -1,13 +1,14 @@
 use super::MagicRule;
 
 use nom::{
+    AsChar,
     IResult,
+    Parser,
     bytes::complete::{is_not, tag, take, take_while},
-    character::is_digit,
     combinator::{map, map_res, opt},
     multi::many0,
     number::complete::be_u16,
-    sequence::{delimited, preceded, terminated, tuple},
+    sequence::{delimited, preceded, terminated},
 };
 use petgraph::prelude::*;
 use std::collections::HashMap;
@@ -16,26 +17,26 @@ use std::str;
 // Singular magic ruleset
 fn magic_rules(input: &[u8]) -> IResult<&[u8], MagicRule<'_>> {
     let int_or = |default| {
-        map(take_while(is_digit), move |digits| {
+        map(take_while(AsChar::is_dec_digit), move |digits| {
             str::from_utf8(digits).unwrap().parse().unwrap_or(default)
         })
     };
 
-    let (input, (indent_level, start_off, val_len)) = tuple((
+    let (input, (indent_level, start_off, val_len)) = (
         terminated(int_or(0), tag(">")),
         terminated(int_or(0), tag("=")),
         be_u16,
-    ))(input)?;
+    ).parse(input)?;
 
     let (input, (val, mask, _word_len, region_len)) = terminated(
-        tuple((
+        (
             take(val_len),
             opt(preceded(tag("&"), take(val_len))),
             opt(preceded(tag("~"), int_or(1))),
             opt(preceded(tag("+"), int_or(0))),
-        )),
+        ),
         tag("\n"),
-    )(input)?;
+    ).parse(input)?;
 
     Ok((
         input,
@@ -65,8 +66,8 @@ fn ruleset(input: &[u8]) -> IResult<&[u8], Vec<(&str, Vec<MagicRule<'_>>)>> {
         str::from_utf8,
     );
 
-    let magic_entry = tuple((mime, many0(magic_rules)));
-    preceded(tag("MIME-Magic\0\n"), many0(magic_entry))(input)
+    let magic_entry = (mime, many0(magic_rules));
+    preceded(tag("MIME-Magic\0\n"), many0(magic_entry)).parse(input)
 }
 
 fn gen_graph(magic_rules: Vec<MagicRule<'_>>) -> DiGraph<MagicRule<'_>, u32> {
