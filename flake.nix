@@ -8,7 +8,11 @@
   };
 
   outputs =
-    { nixpkgs, rust-overlay, ... }:
+    {
+      self,
+      nixpkgs,
+      rust-overlay,
+    }:
     let
       systems = [
         "x86_64-linux"
@@ -40,6 +44,11 @@
           };
           RUST_SRC_PATH = "${pkgs.rustToolchain}/lib/rustlib/src/rust/library";
         };
+      });
+
+      packages = forAllSystems (pkgs: {
+        tree_magic_mini = pkgs.callPackage ./nix/package.nix { };
+        default = self.packages.${pkgs.stdenv.hostPlatform.system}.tree_magic_mini;
       });
     };
 }
